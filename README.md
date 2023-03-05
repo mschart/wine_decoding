@@ -1,8 +1,20 @@
+# Recovering origin and ratings of Bordeaux wines with raw gas chromatography
 
+All figures can be reproduced using the following three scripts:
 
-`estate_vintage_clf.py`
-`parker_clf.py`
-`embed.py`
+* `estate_vintage_clf.py`: Decoding estate and vintage from wine chromatograms
+* `parker_clf.py`: Decoding Parker's rating from wine chromatograms
+* `embed.py`: Embedding wine chromatograms in 2d (3d) space using umap and tSNE
+
+Each script contains functions to process **raw data** that is found in `Source_Data/data` 
+resulting in files for plotting, stored in `Source_Data/res`, precomputed for your convenience. 
+Running all analyses from the raw data takes about 3 h on a laptop in total. 
+
+## Prerequisites
+
+See imported libraries in three processing scripts (all rapidly installable via pip).
+
+## List of figures with function name and script name to reproduce:
 
 * Figure 1 `plot_tile_main in embed.py`
 * Figure 2, 5(c,d) `plot_violin in estate_vintage_clf.py`
@@ -19,6 +31,31 @@
 * Figure S10 `plot_chunk2 in parker_clf.py`
 * Figure S13 `plot_chunks_m_dists in estate_vintage_clf.py`
 * Table S2 `varietals_table in embed.py`
+
+## Example application:
+To clone this repository into your home directory, type in a terminal:
+
+`git clone https://github.com/mschart/wine_decoding.git`
+
+To reproduce figure 1, navigate into directory `wine_decoding`,
+start an ipython session and type:
+
+```python
+# read in script (pip install missing libraries if needed) for figure 1
+run '/home/mic/wine_decoding/embed.py'
+
+# activate interactive plotting
+plt.ion()
+
+# plot figure 1 by running listed function (loading in raw data directly)
+plot_tile_main()
+```
+
+
+
+
+
+
 
 
 
