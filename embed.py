@@ -90,7 +90,7 @@ def set_axes_equal(ax):
 
 
 def dim_red(algo, chem_type, ax=None, fig=None,
-            d3=False, idx=0, rs=8, remap=False):
+            d3=False, idx=0, rs=8, remap=True):
     '''
     algo in umap, tSNE
     '''
