@@ -1,0 +1,12 @@
+numpy
+pandas
+scipy
+scikit-learn
+pathlib
+dataframe_image
+distinctipy
+string
+matplotlib
+umap-learn
+seaborn
+datetime
