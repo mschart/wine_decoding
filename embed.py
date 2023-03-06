@@ -354,7 +354,11 @@ def varietals_table():
     cols = ['estate', 'vintage', 'CS [%]', 'M [%]', 'CF [%]', 'PV [%]']
     r = []
     for i in range(len(wines)):
-        r.append([wines[i].split('_')[0], wines[i].split('_')[0]])
+        r.append([wines[i].split('_')[0], wines[i].split('_')[1],
+                  x[i][0], x[i][1], x[i][2], x[i][3]])
 
     df = pd.DataFrame(r, columns=cols)
-    dfi.export(df, pth_dat / 'table.png')
+    dfi.export(df, str(pth_dat / 'figs/table_S2.png'))
+    
+    
+    

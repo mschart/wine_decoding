@@ -14,6 +14,7 @@ import seaborn as sns
 import copy
 from scipy.stats import pearsonr
 import warnings
+from matplotlib.lines import Line2D
 
 warnings.filterwarnings('ignore')
 
@@ -242,12 +243,19 @@ def batch_chunk2(chem_type='oak'):
     np.save(pth_dat / 'res/parker_chunks2.npy', res, allow_pickle=True)
 
 
-def batch_job():
+def batch_job(compounds=False):
     '''
     use Ridge for parker decoding
     for 4 different chemical input types
     adapted to leave-one-out
     '''
+ 
+    if compounds:
+        chem_types = ['m_oak', 'm_esters', 'm_offFla', 'm_concat']
+    else:
+    
+        chem_types = ['oak', 'esters', 'offFla', 'concat']
+                  
 
     R = {}
     for stype in ['norm', 'shuf']:
@@ -257,7 +265,7 @@ def batch_job():
         else:
             shuf = False
 
-        for chem_type in ['m_esters', 'm_offFla']:
+        for chem_type in chem_types:
             print(chem_type)
             r = []
             if shuf:
@@ -268,66 +276,11 @@ def batch_job():
 
             res[chem_type] = r
         R[stype] = res
-
-    np.save(pth_dat / 'res/parker_ridge_m2.npy', R)
-
-
-def chunk_survival_p(chem_type):
-    '''
-    What is the 10 % of the data that is most informative for domain
-    decoding? Survival algorithm:
-
-    1. divide concatenated spectrum into 100 chunks;
-    2. for all chunks, compute accuracy for data w/o that chunk
-       (5 times 10 fold cross validation)
-    3. remove the data chunk whose removal
-       resulted in highest performance;
-    4. for the remaining chunks, remove the next one,
-       chosen again by going through all and discarding
-       the one whose removal had the highest decoding performance
-    5. iterate 4 until only 10 % of chunks are left,
-       which are thus the most important ones of the data for decoding
-    '''
-
-    n_chunks = 50.0  # 100.0
-    n_deletions = int(n_chunks - 1)
-    x0, y, wines = get_parker_data(chem_type)
-
-    l0 = len(x0[0])
-
-    m2 = np.array_split(range(l0), n_chunks)
-    d = dict(zip(range(int(n_chunks)), m2))
-
-    leasts = {}
-    for ii in range(n_deletions):  # (80)
-
-        Res = {}
-        for i in d:
-
-            # remove i'th chunk from data
-            d2 = deepcopy(d)
-            del d2[i]
-            x = x0[:, np.concatenate(list(d2.values()))]
-
-            print(len(x), len(x[0]), len(list(d2.values())))
-
-            res = []
-            for j in range(50):
-                train_, test_ = decodeP(x, y, wines, 'Lasso')
-                res.append(test_)
-            Res[i] = np.mean(res)
-
-        # find chunk whose removal caused max decoding
-        discard = max(Res.keys(), key=(lambda k: Res[k]))
-        leasts[discard] = Res[discard]
-        print(leasts)
-        del d[discard]
-        print('######################')
-        print(f'{ii} of {n_deletions}')
-        print('######################')
-
-    print(leasts)
-    np.save(pth_dat / f'res/leasts_parker_{chem_type}.npy', leasts)
+    
+    if compounds:
+        np.save(pth_dat / 'res/parker_ridge_m2.npy', R)
+    else:
+        np.save(pth_dat / 'res/parker_ridge_raw.npy', R)
 
 
 '''
@@ -398,7 +351,8 @@ def plot_chunk2():
 
 def plot_violin_p(metric='m', high='oak'):
     '''
-    Figure 4, Table S1, Figure 5e,f
+    Figure 4, Table S1 (print out), 
+    Figure 5e,f (set high='m_oak')
 
     plotting results from batch_job() as violins;
 
@@ -409,15 +363,18 @@ def plot_violin_p(metric='m', high='oak'):
     train  # display training accuracy
     '''
 
-    R0 = np.load(pth_dat / 'res/parker_ridge_raw.npy',
-                 allow_pickle=True).flat[0]
-
     if high[0] == 'm':
+        R0 = np.load(pth_dat / 'res/parker_ridge_m2.npy',
+                 allow_pickle=True).flat[0]
+    
         R = {}
         key_order = ['m_esters', 'm_oak', 'm_offFla', 'm_concat']
         R['norm'] = {k: R0['norm'][k] for k in key_order}
         R['shuf'] = {k: R0['shuf'][k] for k in key_order}
     else:
+        R0 = np.load(pth_dat / 'res/parker_ridge_raw.npy',
+                 allow_pickle=True).flat[0]    
+        
         R = {}
         key_order = ['esters', 'oak', 'offFla', 'concat']
         R['norm'] = {k: R0['norm'][k] for k in key_order}
@@ -465,9 +422,6 @@ def plot_violin_p(metric='m', high='oak'):
 
             # Bonferroni correction
             p = p * len(Counter(df['GC type']))
-
-            if p > 1:
-                p = 1
 
             print(f'chem type: {chem_type}; metric: {q}; '
                   f'score: {D_n[q].values[0]}; '
@@ -556,13 +510,15 @@ def plot_violin_p(metric='m', high='oak'):
     axs[0].set_xlabel('true Parker score')
     axs[0].set_ylabel('predicted parker score')
     axs[0].set_title(high)
-    leg = axs[0].legend(frameon=False)
-    for lh in leg.legendHandles:
-        lh.set_alpha(1)
+
+    custom_lines = [Line2D([0], [0], color='k', lw=2),
+                    Line2D([0], [0], color='Gray', lw=2)] 
+                       
+    axs[0].legend(custom_lines, ['norm', 'shuf'],frameon=False)
 
     if high[0] == 'm':
-
         axs[1].tick_params(axis='x', labelrotation=45)
+        
     fig.tight_layout()
     fig.tight_layout()
     return P

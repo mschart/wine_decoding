@@ -799,7 +799,7 @@ def plot_violin(dr=False):
         fig.tight_layout()
 
 
-def plot_chunks2(n_chunks, vintage=False):
+def plot_chunks2(n_chunks=50.0, vintage=False):
     '''
     plot decoding per chunk
     place example spectrum on top
@@ -810,7 +810,7 @@ def plot_chunks2(n_chunks, vintage=False):
 
     for n_chunks in [5.0,10.0,20.0,50.0]:
         for vintage in [True,False]:
-
+            plot_chunks2(n_chunks=n_chunks, vintage=vintage)
 
     '''
     if vintage:
@@ -965,11 +965,13 @@ def plot_chunks_m_dists(cla='LDA', sigl=0.01):
 def plot_survival(chem_type, vintage=False, ax=None, ax2=None,
                   savef=False, losers=False):
     '''
+    Figure S11 for chem_type='m_concat'
+    
     survival of the fittest data segment
     '''
 
     if losers:
-        p = (pth_dat / f'res/losers/'
+        p = (pth_dat / f'res/'
              f'leasts_vint_{vintage}_loosers_{chem_type}.npy')
     else:
         if vintage:
@@ -992,7 +994,7 @@ def plot_survival(chem_type, vintage=False, ax=None, ax2=None,
     print('max score:', max(list(leasts3.values())))
 
     def my_formatter(q, pos=None):
-        if chem_type == 'manual':
+        if chem_type == 'm_concat':
             return (n_chunks - q)
         else:
             return (n_chunks - q) * 100 / n_chunks
@@ -1000,7 +1002,7 @@ def plot_survival(chem_type, vintage=False, ax=None, ax2=None,
     ax.xaxis.set_major_formatter(
         matplotlib.ticker.FuncFormatter(my_formatter))
 
-    if chem_type == 'manual':
+    if chem_type == 'm_concat':
         ax.set_xlabel("Best #features for decoding")
     else:
         ax.set_xlabel(f"{['Worst' if losers else 'Best'][0]} fraction "
@@ -1047,7 +1049,7 @@ def plot_survival(chem_type, vintage=False, ax=None, ax2=None,
 
 def plot_all_survival(losers=False):
     '''
-    figure S7 (S8 with losers=True)
+    figure S7 (S8 with losers=True, Figure )
 
     Illustrate survival algorithm results
     '''
@@ -1256,8 +1258,8 @@ def plot_weights_m_abs():
             ax[c].set_xticks(range(w.shape[1]))
             ax[c].set_xticklabels(labs, rotation=90)
             ax[c].set_ylabel('absolute weights \n class average')
-            ax[c].set_title(f'{decoder},'
-                            'f{"vintage" if vintage else "estate"}')
+            s = "vintage" if vintage else "estate"
+            ax[c].set_title(f'{decoder}, {s}')
 
             c += 1
 
