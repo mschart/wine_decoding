@@ -275,7 +275,7 @@ def plot_tile_main(rs=28):
     fig = plt.figure(rs, figsize=(8, 10))
     ax = plt.subplot(3, 2, 1)
     img = mpimg.imread(pth_dat / 'data/bordeaux_map.png')
-    plt.imshow(img)
+    plt.imshow(img, interpolation='none')
     plt.axis('off')
     add_panel_letter(1)
 
@@ -358,7 +358,7 @@ def varietals_table():
                   x[i][0], x[i][1], x[i][2], x[i][3]])
 
     df = pd.DataFrame(r, columns=cols)
-    dfi.export(df, str(pth_dat / 'figs/table_S2.png'))
+    dfi.export(df, str(pth_dat / 'figs/Table_S2.png'))
     
     
     

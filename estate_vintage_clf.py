@@ -374,9 +374,9 @@ def concat_best_data(vintage=False):
             res.append(NN(x, y, decoder))
         R[decoder] = res
     if vintage:
-        np.save('wine/res/best_vintage.npy', R)
+        np.save(pth_dat / 'res/best_vintage.npy', R)
     else:
-        np.save('wine/res/best.npy', R)
+        np.save(pth_dat / 'res/best.npy', R)
     return R
 
 
@@ -396,9 +396,9 @@ def concat_rand_data(vintage=True):
             res[frac] = r
         R[decoder] = res
     if vintage:
-        np.save('wine/res/rand_vintage.npy', R)
+        np.save(pth_dat / 'res/rand_vintage.npy', R)
     else:
-        np.save('wine/res/rand.npy', R)
+        np.save(pth_dat / 'res/rand.npy', R)
     return R
 
 

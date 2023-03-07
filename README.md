@@ -8,17 +8,18 @@ All figures can be reproduced using the following three scripts:
 
 Each script contains functions to process **raw data** that is found in `Source_Data/data` 
 resulting in files for plotting, stored in `Source_Data/res`, precomputed for your convenience. 
-Running all analyses from the raw data takes about 3 h on a laptop in total.
+Running all analyses from the raw data takes about 3 h on a laptop in total. All figures 
+are precomputed in `Source_Data/figs`.
 
 The `Source_Data/data` contains the following:
 
-### gas chromatography features per wine, three types and concatenation
+### Gas chromatography features per wine, three types and concatenation
 * `oak.npy`, 80 wines x 30275 GC features, each wine e.g. with name `A_2012`, i.e. estate A, vintage 2012
 * `esters.npy`, 80x7881
 * `offFla.npy`, 80x10480
 * `concat.npy`, 80x48636
 
-### manually selected compounds of gas chromatography per wine, three types and concatenation
+### Manually selected compounds of gas chromatography per wine, three types and concatenation
 * `m_oak.npy`, 80x13
 * `m_esters.npy`, 80x16
 * `m_offFla.npy`, 80x3
@@ -75,6 +76,7 @@ plot_tile_main()
 ```
 
 Some figures need manual assembly (figure 5, 3, S2). 
+
 
 
 
