@@ -5,7 +5,7 @@ import string
 import matplotlib.image as mpimg
 import numpy as np
 from sklearn.manifold import TSNE
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA, FastICA
 from sklearn.preprocessing import StandardScaler
 import umap
 import pandas as pd
@@ -16,7 +16,7 @@ matplotlib.rcParams.update({'font.size': 11})
 
 '''
 Script to analyse and plot dimensionality reduction results,
-raw spectra and varietal info (grpae type ratios),
+raw spectra and varietal info (grape type ratios),
 shown in the following figures [function], using Source Data
 files:
 
@@ -149,6 +149,10 @@ def dim_red(algo, chem_type, ax=None, fig=None,
         pca.fit(x)
         x_embedded = pca.transform(x)
 
+    if algo == 'ICA':
+        ica = FastICA(n_components=n_comp)
+        x_embedded = ica.fit_transform(x)
+
     if ax is None:
         if d3:
             ax = plt.axes(projection='3d')
@@ -271,32 +275,34 @@ def plot_tile_main(rs=28):
     rs: random_seed for dim reduction
     '''
 
-    plt.ioff()
-    fig = plt.figure(rs, figsize=(8, 10))
-    ax = plt.subplot(3, 2, 1)
+    #plt.ioff()
+    fig = plt.figure(rs, figsize=(10, 8))
+    ax = plt.subplot(2, 3, 3)
     img = mpimg.imread(pth_dat / 'data/bordeaux_map.png')
     plt.imshow(img, interpolation='none')
     plt.axis('off')
-    add_panel_letter(1)
-
-    ax = plt.subplot(3, 2, 3)
-    dim_red('tSNE', 'concat', ax, rs=rs)
-    add_panel_letter(2)
-
-    ax = plt.subplot(3, 2, 4)
-    dim_red('umap', 'concat', ax, rs=rs)
     add_panel_letter(3)
 
-    ax = plt.subplot(3, 2, 5)
+    ax = plt.subplot(2, 3, 1)
+    dim_red('tSNE', 'concat', ax, rs=rs)
+    add_panel_letter(1)
+    ax.set_title('wines')
+
+    ax = plt.subplot(2, 3, 2)
+    dim_red('umap', 'concat', ax, rs=rs)
+    add_panel_letter(2)
+    ax.set_title('wines')
+
+    ax = plt.subplot(2, 3, 4)
     dim_red_grape_ratio('tSNE', ax, rs=rs)
     add_panel_letter(4)
 
-    ax = plt.subplot(3, 2, 6)
+    ax = plt.subplot(2, 3, 5)
     dim_red_grape_ratio('umap', ax, rs=rs)
     add_panel_letter(5)
 
     plt.tight_layout()
-    plt.show()
+    
 
 
 def plot_tile_supp():
