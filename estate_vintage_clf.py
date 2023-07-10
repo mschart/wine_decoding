@@ -120,7 +120,7 @@ def get_data(chem_type, vintage=False, exclude=True, get_map=False):
 
 
 def get_best_data(vintage=False, best=4, rand=False, wines=None):
-    ''' pick best segments of each spectrum; then concatenate
+    ''' pick best segments of each chromatogram; then concatenate
     '''
 
     n_chunks = 50
@@ -236,7 +236,7 @@ def NN(x, y, decoder='LDA', wines=None, CC=1.0,
        return_weights=False, shuf=False):
     '''
     function to decode estate or vintage (y) from the chemical
-    spectrum (x); x,y = get_data(chem_type)
+    chromatogram (x); x,y = get_data(chem_type)
     '''
 
     print('input dimension:', np.shape(x))
@@ -433,7 +433,7 @@ def chunk_survival(chem_type, loosers=False, vintage=False):
     What is the 10 % of the data that is most informative for estate
     decoding? Survival algorithm:
 
-    1. divide concatenated spectrum into 100 chunks;
+    1. divide concatenated chromatogram into 100 chunks;
     2. for all chunks, compute accuracy for data w/o that chunk
        (5 times 10 fold cross validation)
     3. remove the data chunk whose removal
@@ -505,7 +505,7 @@ def chunks2(chem_type, vintage=False, shuf=False, n_chunks=50,
             cla='LDA'):
     '''
     evaluate decoding performance
-    for sections of the spectrum
+    for sections of the chromatogram
     just linearly
     '''
 
@@ -802,7 +802,7 @@ def plot_violin(dr=False):
 def plot_chunks2(n_chunks=50.0, vintage=False):
     '''
     plot decoding per chunk
-    place example spectrum on top
+    place example chromatogram on top
 
     n_chunks = 50.0 for figure 3
 
@@ -840,7 +840,7 @@ def plot_chunks2(n_chunks=50.0, vintage=False):
         if k == len(R):
             ax1.set_xlabel('data section number \n'
                            f' [one bar is {100/len(R[chem_type])}%'
-                           '  of the spectrum]')
+                           '  of the chromatogram]')
         ax1.axhline(y=8 if vintage else 14, linestyle='--',
                     label='chance', color='grey')
 
@@ -849,7 +849,7 @@ def plot_chunks2(n_chunks=50.0, vintage=False):
         ax1.tick_params(axis='y', labelcolor='r')
         plt.title(chem_type)
 
-        # load example spectrum
+        # load example chromatogram
         ax2 = ax1.twinx()
         x0, _ = get_data(chem_type)
         xs = np.linspace(0, len(R[chem_type]), len(x0[0]))
@@ -1006,7 +1006,7 @@ def plot_survival(chem_type, vintage=False, ax=None, ax2=None,
         ax.set_xlabel("Best #features for decoding")
     else:
         ax.set_xlabel(f"{['Worst' if losers else 'Best'][0]} fraction "
-                      "of spectrum for decoding [%]")
+                      "of chromatogram for decoding [%]")
     if vintage:
         ax.set_ylabel('LDA accuracy [%] \n for vintage')
     else:
