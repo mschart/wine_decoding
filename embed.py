@@ -353,9 +353,17 @@ def varietals_table():
 
     x = []
     wines = []
+    
     for wine in d:
         x.append(d[wine])
-        wines.append(wine[0] + '_' + wine[1:])
+        wines.append(new_code(wine[0]) + '_' + wine[1:])
+
+    wines = np.array(wines)
+    x = np.array(x)
+
+    ord_ = np.argsort(wines)
+    wines = wines[ord_]
+    x = x[ord_]
 
     cols = ['estate', 'vintage', 'CS [%]', 'M [%]', 'CF [%]', 'PV [%]']
     r = []
@@ -364,7 +372,7 @@ def varietals_table():
                   x[i][0], x[i][1], x[i][2], x[i][3]])
 
     df = pd.DataFrame(r, columns=cols)
-    dfi.export(df, str(pth_dat / 'figs/Table_S2.png'))
+    dfi.export(df, str(pth_dat / 'figs/Table_S2.png'), dpi=400)
     
     
     
